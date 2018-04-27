@@ -1,15 +1,15 @@
 import {
   forEach
-} from 'min-dash';
+} from "min-dash";
 
 
-export function getTopLevel(elements) {
+export function getTopLevel(elements : any) :any {
   var topLevel = {},
-      parents = [],
-      result = [],
-      clearedParents = [];
+      parents: any[],
+      result: any[],
+      clearedParents: any[];
 
-  forEach(elements, function(element) {
+  forEach(elements, function(element:any): any {
     var parent = element.parent;
 
     if (!topLevel[parent.id]) {
@@ -32,7 +32,7 @@ export function getTopLevel(elements) {
   });
 
   forEach(parents, function(parent) {
-    var idx = clearedParents.indexOf(parent);
+    let idx = clearedParents.indexOf(parent);
 
     if (idx === -1) {
       result = result.concat(topLevel[parent]);
