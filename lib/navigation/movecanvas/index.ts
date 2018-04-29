@@ -1,4 +1,4 @@
-import MoveCanvas from './MoveCanvas';
+import MoveCanvas from "./MoveCanvas";
 
 export default {
   __init__: [ 'moveCanvas' ],

@@ -6,11 +6,11 @@ import {
   assign
 } from 'min-dash';
 
-var FN_REF = '__fn';
+let FN_REF:any  = '__fn';
 
-var DEFAULT_PRIORITY = 1000;
+let DEFAULT_PRIORITY:any = 1000;
 
-var slice = Array.prototype.slice;
+let slice:any = Array.prototype.slice;
 
 /**
  * A general purpose event bus.
@@ -95,13 +95,16 @@ var slice = Array.prototype.slice;
  * console.log(sum); // 3
  * ```
  */
-export default function EventBus() {
+export default class EventBus{
+  constructor(){
   this._listeners = {};
 
   // cleanup on destroy on lowest priority to allow
   // message passing until the bitter end
   this.on('diagram.destroy', 1, this._destroy, this);
 }
+wrappedCallback:any;
+_listeners:any;
 
 
 /**
@@ -121,7 +124,7 @@ export default function EventBus() {
  * @param {Function} callback
  * @param {Object} [that] Pass context (`this`) to the callback
  */
-EventBus.prototype.on = function(events, priority, callback, that) {
+on = function(events:any, priority:any, callback:any, that:any) {
 
   events = isArray(events) ? events : [ events ];
 
@@ -135,7 +138,7 @@ EventBus.prototype.on = function(events, priority, callback, that) {
     throw new Error('priority must be a number');
   }
 
-  var actualCallback = callback;
+  let actualCallback = callback;
 
   if (that) {
     actualCallback = bind(callback, that);
@@ -146,10 +149,10 @@ EventBus.prototype.on = function(events, priority, callback, that) {
     actualCallback[FN_REF] = callback[FN_REF] || callback;
   }
 
-  var self = this,
+  let self = this,
       listener = { priority: priority, callback: actualCallback };
 
-  events.forEach(function(e) {
+  events.forEach(function(e:any) {
     self._addListener(e, listener);
   });
 };
@@ -162,8 +165,8 @@ EventBus.prototype.on = function(events, priority, callback, that) {
  * @param {Function} callback the callback to execute
  * @param {Object} [that] Pass context (`this`) to the callback
  */
-EventBus.prototype.once = function(event, priority, callback, that) {
-  var self = this;
+once = function(event:any, priority:any, callback:any, that:any) {
+  let self = this;
 
   if (isFunction(priority)) {
     that = callback;
@@ -175,7 +178,7 @@ EventBus.prototype.once = function(event, priority, callback, that) {
     throw new Error('priority must be a number');
   }
 
-  function wrappedCallback() {
+  function wrappedCallback():any {
     self.off(event, wrappedCallback);
     return callback.apply(that, arguments);
   }
@@ -183,7 +186,7 @@ EventBus.prototype.once = function(event, priority, callback, that) {
   // make sure we remember and are able to remove
   // bound callbacks via {@link #off} using the original
   // callback
-  wrappedCallback[FN_REF] = callback;
+  this.wrappedCallback[FN_REF] = callback;
 
   this.on(event, priority, wrappedCallback);
 };
@@ -197,8 +200,8 @@ EventBus.prototype.once = function(event, priority, callback, that) {
  * @param {String} event
  * @param {Function} [callback]
  */
-EventBus.prototype.off = function(event, callback) {
-  var listeners = this._getListeners(event),
+off = function(event:any, callback:any) {
+  let  listeners = this._getListeners(event),
       listener,
       listenerCallback,
       idx;
@@ -228,8 +231,8 @@ EventBus.prototype.off = function(event, callback) {
  *
  * @return {Object} event, recognized by the eventBus
  */
-EventBus.prototype.createEvent = function(data) {
-  var event = new InternalEvent();
+createEvent = function(data:any) {
+  let event = new InternalEvent();
 
   event.init(data);
 
@@ -246,11 +249,11 @@ EventBus.prototype.createEvent = function(data) {
  * events.fire('foo');
  *
  * // fire event object with nested type
- * var event = { type: 'foo' };
+ * let  event = { type: 'foo' };
  * events.fire(event);
  *
  * // fire event with explicit type
- * var event = { x: 10, y: 20 };
+ * let   event = { x: 10, y: 20 };
  * events.fire('element.moved', event);
  *
  * // pass additional arguments to the event
@@ -267,9 +270,9 @@ EventBus.prototype.createEvent = function(data) {
  * @return {Boolean} the events return value, if specified or false if the
  *                   default action was prevented by listeners
  */
-EventBus.prototype.fire = function(type, data) {
+fire = function(type:any, data:any) {
 
-  var event,
+  let   event,
       listeners,
       returnValue,
       args;
@@ -304,7 +307,7 @@ EventBus.prototype.fire = function(type, data) {
   args[0] = event;
 
   // original event type (in case we delegate)
-  var originalType = event.type;
+  let   originalType = event.type;
 
   // update event type before delegation
   if (type !== originalType) {
@@ -330,18 +333,17 @@ EventBus.prototype.fire = function(type, data) {
 };
 
 
-EventBus.prototype.handleError = function(error) {
+handleError = function(error:any) {
   return this.fire('error', { error: error }) === false;
 };
 
 
-EventBus.prototype._destroy = function() {
+_destroy = function() {
   this._listeners = {};
 };
+_invokeListeners = function(event:any, args:any, listeners:any) {
 
-EventBus.prototype._invokeListeners = function(event, args, listeners) {
-
-  var idx,
+  let idx,
       listener,
       returnValue;
 
@@ -358,9 +360,9 @@ EventBus.prototype._invokeListeners = function(event, args, listeners) {
   return returnValue;
 };
 
-EventBus.prototype._invokeListener = function(event, args, listener) {
+_invokeListener = function(event:any, args:any, listener:any) {
 
-  var returnValue;
+  let returnValue;
 
   try {
     // returning false prevents the default action
@@ -404,9 +406,9 @@ EventBus.prototype._invokeListener = function(event, args, listener) {
  * @param {String} event
  * @param {Object} listener { priority, callback }
  */
-EventBus.prototype._addListener = function(event, newListener) {
+_addListener = function(event:any, newListener:any) {
 
-  var listeners = this._getListeners(event),
+  let   listeners = this._getListeners(event),
       existingListener,
       idx;
 
@@ -425,8 +427,8 @@ EventBus.prototype._addListener = function(event, newListener) {
 };
 
 
-EventBus.prototype._getListeners = function(name) {
-  var listeners = this._listeners[name];
+_getListeners = function(name:any) {
+  let   listeners = this._listeners[name];
 
   if (!listeners) {
     this._listeners[name] = listeners = [];
@@ -439,19 +441,8 @@ EventBus.prototype._getListeners = function(name) {
 /**
  * A event that is emitted via the event bus.
  */
-function InternalEvent() { }
 
-InternalEvent.prototype.stopPropagation = function() {
-  this.cancelBubble = true;
-};
-
-InternalEvent.prototype.preventDefault = function() {
-  this.defaultPrevented = true;
-};
-
-InternalEvent.prototype.init = function(data) {
-  assign(this, data || {});
-};
+}
 
 
 /**
@@ -462,6 +453,19 @@ InternalEvent.prototype.init = function(data) {
  *
  * @return {Any}
  */
-function invokeFunction(fn, args) {
+function invokeFunction(fn:any, args:any) {
   return fn.apply(null, args);
+}
+class InternalEvent{
+
+  stopPropagation = function() {
+    this.cancelBubble = true;
+  };
+  preventDefault = function() {
+    this.defaultPrevented = true;
+  };
+  
+  init = function(data:any) {
+    assign(this, data || {});
+  };
 }

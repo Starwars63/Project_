@@ -7,10 +7,10 @@ import {
   pointDistance
 } from '../util/Geometry';
 
-import intersectPaths from 'path-intersection';
+import {findPathIntersections} from "path-intersection";
 
 
-export function roundBounds(bounds) {
+export function roundBounds(bounds:any) {
   return {
     x: Math.round(bounds.x),
     y: Math.round(bounds.y),
@@ -20,7 +20,7 @@ export function roundBounds(bounds) {
 }
 
 
-export function roundPoint(point) {
+export function roundPoint(point:any) {
 
   return {
     x: Math.round(point.x),
@@ -36,7 +36,7 @@ export function roundPoint(point) {
  *
  * @return {Object}
  */
-export function asTRBL(bounds) {
+export function asTRBL(bounds:any) {
   return {
     top: bounds.y,
     right: bounds.x + (bounds.width || 0),
@@ -53,7 +53,7 @@ export function asTRBL(bounds) {
  *
  * @return {Bounds}
  */
-export function asBounds(trbl) {
+export function asBounds(trbl:any) {
   return {
     x: trbl.left,
     y: trbl.top,
@@ -70,7 +70,7 @@ export function asBounds(trbl) {
  *
  * @return {Point}
  */
-export function getMid(bounds) {
+export function getMid(bounds:any) {
   return roundPoint({
     x: bounds.x + (bounds.width || 0) / 2,
     y: bounds.y + (bounds.height || 0) / 2
@@ -93,7 +93,7 @@ export function getMid(bounds) {
  *
  * @return {String} the orientation; one of top, top-left, left, ..., bottom, right or intersect.
  */
-export function getOrientation(rect, reference, padding) {
+export function getOrientation(rect:any, reference:any, padding:any) {
 
   padding = padding || 0;
 
@@ -104,15 +104,15 @@ export function getOrientation(rect, reference, padding) {
   }
 
 
-  var rectOrientation = asTRBL(rect),
+  let rectOrientation = asTRBL(rect),
       referenceOrientation = asTRBL(reference);
 
-  var top = rectOrientation.bottom + padding.y <= referenceOrientation.top,
+  let top = rectOrientation.bottom + padding.y <= referenceOrientation.top,
       right = rectOrientation.left - padding.x >= referenceOrientation.right,
       bottom = rectOrientation.top - padding.y >= referenceOrientation.bottom,
       left = rectOrientation.right + padding.x <= referenceOrientation.left;
 
-  var vertical = top ? 'top' : (bottom ? 'bottom' : null),
+  let vertical = top ? 'top' : (bottom ? 'bottom' : null),
       horizontal = left ? 'left' : (right ? 'right' : null);
 
   if (horizontal && vertical) {
@@ -134,9 +134,9 @@ export function getOrientation(rect, reference, padding) {
  *
  * @return {Point}
  */
-export function getElementLineIntersection(elementPath, linePath, cropStart) {
+export function getElementLineIntersection(elementPath:any, linePath:any, cropStart:boolean) {
 
-  var intersections = getIntersections(elementPath, linePath);
+  let intersections = getIntersections(elementPath, linePath);
 
   // recognize intersections
   // only one -> choose
@@ -151,8 +151,8 @@ export function getElementLineIntersection(elementPath, linePath, cropStart) {
 
     // sort by intersections based on connection segment +
     // distance from start
-    intersections = sortBy(intersections, function(i) {
-      var distance = Math.floor(i.t2 * 100) || 1;
+    intersections = sortBy(intersections, function(i:any) {
+      let distance:any = Math.floor(i.t2 * 100) || 1;
 
       distance = 100 - distance;
 
@@ -171,6 +171,6 @@ export function getElementLineIntersection(elementPath, linePath, cropStart) {
 }
 
 
-export function getIntersections(a, b) {
-  return intersectPaths(a, b);
+export function getIntersections(a:any, b:any) {
+  return findPathIntersections(a, b, null);
 }

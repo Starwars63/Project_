@@ -16,8 +16,8 @@ import {
   pointsAligned
 } from '../util/Geometry';
 
-var INTERSECTION_THRESHOLD = 20,
-    ORIENTATION_THRESHOLD = {
+let INTERSECTION_THRESHOLD = 20,
+    ORIENTATION_THRESHOLD:any = {
       'h:h': 20,
       'v:v': 20,
       'h:v': -10,
@@ -46,7 +46,7 @@ var INTERSECTION_THRESHOLD = 20,
  *
  * @return {Array<Point>}
  */
-export function getBendpoints(a, b, directions) {
+export function getBendpoints(a:any , b:any, directions:string) {
 
   directions = directions || 'h:h';
 
@@ -97,9 +97,9 @@ export function getBendpoints(a, b, directions) {
  *
  * @return {Array<Point>}
  */
-export function connectPoints(a, b, directions) {
+export function connectPoints(a:any, b:any, directions:string ) {
 
-  var points = [];
+  let points:any  = [];
 
   if (!pointsAligned(a, b)) {
     points = getBendpoints(a, b, directions);
@@ -128,17 +128,17 @@ export function connectPoints(a, b, directions) {
  *
  * @return {Array<Point>} connection points
  */
-export function connectRectangles(source, target, start, end, hints) {
+export function connectRectangles(source:any , target:any , start:any, end:any, hints:any) {
 
-  var preferredLayouts = hints && hints.preferredLayouts || [];
+  let preferredLayouts:any = hints && hints.preferredLayouts || [];
 
-  var preferredLayout = without(preferredLayouts, 'straight')[0] || 'h:h';
+  let preferredLayout:any = without(preferredLayouts, 'straight')[0] || 'h:h';
 
-  var threshold = ORIENTATION_THRESHOLD[preferredLayout] || 0;
+  let threshold:any= ORIENTATION_THRESHOLD[preferredLayout] || 0;
 
-  var orientation = getOrientation(source, target, threshold);
+  let orientation:any = getOrientation(source, target, threshold);
 
-  var directions = getDirections(orientation, preferredLayout);
+  let directions:any = getDirections(orientation, preferredLayout);
 
   start = start || getMid(source);
   end = end || getMid(target);
@@ -203,7 +203,7 @@ export function connectRectangles(source, target, start, end, hints) {
  *
  * @return {Array<Point>} repaired waypoints
  */
-export function repairConnection(source, target, start, end, waypoints, hints) {
+export function repairConnection(source:any , target:any, start:any, end:any, waypoints:any, hints:any) {
 
   if (isArray(start)) {
     waypoints = start;
@@ -216,7 +216,7 @@ export function repairConnection(source, target, start, end, waypoints, hints) {
   hints = assign({ preferredLayouts: [] }, hints);
   waypoints = waypoints || [];
 
-  var preferredLayouts = hints.preferredLayouts,
+  let preferredLayouts = hints.preferredLayouts,
       preferStraight = preferredLayouts.indexOf('straight') !== -1,
       repairedWaypoints;
 
@@ -252,12 +252,12 @@ export function repairConnection(source, target, start, end, waypoints, hints) {
 }
 
 
-function inRange(a, start, end) {
+function inRange(a:any, start:any, end:any) {
   return a >= start && a <= end;
 }
 
-function isInRange(axis, a, b) {
-  var size = {
+function isInRange(axis:any, a:any, b:any) {
+  var size:any = {
     x: 'width',
     y: 'height'
   };
@@ -276,12 +276,12 @@ function isInRange(axis, a, b) {
  *
  * @return {Array<Point>} waypoints if straight layout worked
  */
-export function layoutStraight(source, target, start, end, hints) {
-  var axis = {},
-      primaryAxis,
-      orientation;
+export function layoutStraight(source:any, target:any, start:any, end:any, hints:any) {
+  let axis:any = {},
+      primaryAxis:any,
+      orientation:any;
 
-  orientation = getOrientation(source, target);
+  orientation = getOrientation(source, target,0);
 
   // We're only interested in layouting a straight connection
   // if the shapes are horizontally or vertically aligned
@@ -357,9 +357,9 @@ export function layoutStraight(source, target, start, end, hints) {
  *
  * @return {Array<Point>} the repaired points between the two rectangles
  */
-export function _repairConnectionSide(moved, other, newDocking, points) {
+export function _repairConnectionSide(moved:any, other:any, newDocking:any, points:any):any {
 
-  function needsRelayout(moved, other, points) {
+  function needsRelayout(moved:any, other:any, points:any) {
 
     if (points.length < 3) {
       return true;
@@ -378,7 +378,7 @@ export function _repairConnectionSide(moved, other, newDocking, points) {
     });
   }
 
-  function repairBendpoint(candidate, oldPeer, newPeer) {
+  function repairBendpoint(candidate:any, oldPeer:any, newPeer:any) {
 
     var alignment = pointsAligned(oldPeer, candidate);
 
@@ -394,7 +394,7 @@ export function _repairConnectionSide(moved, other, newDocking, points) {
     return { x: candidate.x, y: candidate. y };
   }
 
-  function removeOverlapping(points, a, b) {
+  function removeOverlapping(points:any, a:any, b:any) {
     var i;
 
     for (i = points.length - 2; i !== 0; i--) {
@@ -461,7 +461,7 @@ export function _repairConnectionSide(moved, other, newDocking, points) {
  *
  * @return {String}
  */
-function getDirections(orientation, defaultLayout) {
+function getDirections(orientation:string, defaultLayout:any) {
 
   switch (orientation) {
   case 'intersect':

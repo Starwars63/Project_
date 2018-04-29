@@ -1,6 +1,6 @@
 import {
   getMid
-} from './LayoutUtil';
+} from "./LayoutUtil";
 
 
 /**
@@ -24,7 +24,7 @@ export default function BaseLayouter() {}
  *
  * @return {Array<Point>} the layouted connection waypoints
  */
-BaseLayouter.prototype.layoutConnection = function(connection, hints) {
+BaseLayouter.prototype.layoutConnection = function(connection:any, hints: any) {
 
   hints = hints || {};
 

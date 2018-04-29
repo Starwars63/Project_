@@ -8,13 +8,16 @@ import { attr as svgAttr } from 'tiny-svg';
  *
  * A registry that keeps track of all shapes in the diagram.
  */
-export default function ElementRegistry(eventBus) {
+export default class ElementRegistry{
+constructor(eventBus:any) {
   this._elements = {};
 
   this._eventBus = eventBus;
 }
+_elements:any;
+_eventBus:any;
 
-ElementRegistry.$inject = [ 'eventBus' ];
+static $inject = [ 'eventBus' ];
 
 /**
  * Register a pair of (element, gfx, (secondaryGfx)).
@@ -23,9 +26,9 @@ ElementRegistry.$inject = [ 'eventBus' ];
  * @param {SVGElement} gfx
  * @param {SVGElement} [secondaryGfx] optional other element to register, too
  */
-ElementRegistry.prototype.add = function(element, gfx, secondaryGfx) {
+add = function(element :any, gfx:any, secondaryGfx:any) {
 
-  var id = element.id;
+  let id = element.id;
 
   this._validateId(id);
 
@@ -44,7 +47,7 @@ ElementRegistry.prototype.add = function(element, gfx, secondaryGfx) {
  *
  * @param {djs.model.Base} element
  */
-ElementRegistry.prototype.remove = function(element) {
+remove = function(element:any) {
   var elements = this._elements,
       id = element.id || element,
       container = id && elements[id];
@@ -68,7 +71,7 @@ ElementRegistry.prototype.remove = function(element) {
  * @param {djs.model.Base} element
  * @param {String} newId
  */
-ElementRegistry.prototype.updateId = function(element, newId) {
+updateId = function(element:any, newId:any) {
 
   this._validateId(newId);
 
@@ -104,7 +107,7 @@ ElementRegistry.prototype.updateId = function(element, newId) {
  *
  * @return {djs.model.Base}
  */
-ElementRegistry.prototype.get = function(filter) {
+get = function(filter:any) {
   var id;
 
   if (typeof filter === 'string') {
@@ -124,11 +127,11 @@ ElementRegistry.prototype.get = function(filter) {
  *
  * @return {Array<djs.model.Base>}
  */
-ElementRegistry.prototype.filter = function(fn) {
+filter = function(fn:any) {
 
-  var filtered = [];
+  let filtered:any  = [];
 
-  this.forEach(function(element, gfx) {
+  this.forEach(function(element:any, gfx:any) {
     if (fn(element, gfx)) {
       filtered.push(element);
     }
@@ -142,8 +145,8 @@ ElementRegistry.prototype.filter = function(fn) {
  *
  * @return {Array<djs.model.Base>}
  */
-ElementRegistry.prototype.getAll = function() {
-  return this.filter(function(e) { return e; });
+getAll = function() {
+  return this.filter(function(e:any) { return e; });
 };
 
 /**
@@ -151,7 +154,7 @@ ElementRegistry.prototype.getAll = function() {
  *
  * @param {Function} fn
  */
-ElementRegistry.prototype.forEach = function(fn) {
+forEach = function(fn:any) {
 
   var map = this._elements;
 
@@ -179,10 +182,10 @@ ElementRegistry.prototype.forEach = function(fn) {
  *
  * @return {SVGElement}
  */
-ElementRegistry.prototype.getGraphics = function(filter, secondary) {
-  var id = filter.id || filter;
+getGraphics = function(filter:any, secondary:boolean) {
+  let id = filter.id || filter;
 
-  var container = this._elements[id];
+  let container = this._elements[id];
   return container && (secondary ? container.secondaryGfx : container.gfx);
 };
 
@@ -194,7 +197,7 @@ ElementRegistry.prototype.getGraphics = function(filter, secondary) {
  *
  * @throws {Error} if id is empty or already assigned
  */
-ElementRegistry.prototype._validateId = function(id) {
+_validateId = function(id:string) {
   if (!id) {
     throw new Error('element must have an id');
   }
@@ -203,3 +206,4 @@ ElementRegistry.prototype._validateId = function(id) {
     throw new Error('element with id ' + id + ' already added');
   }
 };
+}

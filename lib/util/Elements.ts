@@ -3,7 +3,7 @@ import {
   isNumber,
   groupBy,
   forEach
-} from 'min-dash';
+} from "min-dash";
 
 
 /**
@@ -14,7 +14,7 @@ import {
  * @param {Object} e
  * @param {Boolean} unique
  */
-export function add(elements, e, unique) {
+export function add(elements: any, e: any, unique:boolean) {
   var canAdd = !unique || elements.indexOf(e) === -1;
 
   if (canAdd) {
@@ -35,7 +35,7 @@ export function add(elements, e, unique) {
  * @param  {Function} fn iterator function called with (element, index, recursionDepth)
  * @param  {Number} [depth] maximum recursion depth
  */
-export function eachElement(elements, fn, depth) {
+export function eachElement(elements : any, fn: any , depth: number) {
 
   depth = depth || 0;
 
@@ -43,7 +43,7 @@ export function eachElement(elements, fn, depth) {
     elements = [ elements ];
   }
 
-  forEach(elements, function(s, i) {
+  forEach(elements, function(s : any , i: any) {
     var filter = fn(s, i, depth);
 
     if (isArray(filter) && filter.length) {
@@ -62,11 +62,11 @@ export function eachElement(elements, fn, depth) {
  *
  * @return {Array<djs.model.Base>} found elements
  */
-export function selfAndChildren(elements, unique, maxDepth) {
-  var result = [],
-      processedChildren = [];
+export function selfAndChildren(elements: any, unique: boolean, maxDepth: number) {
+  var result:any =[],
+      processedChildren:any =[];
 
-  eachElement(elements, function(element, i, depth) {
+  eachElement(elements, function(element: any , i: any , depth: number): any {
     add(result, element, unique);
 
     var children = element.children;
@@ -79,7 +79,7 @@ export function selfAndChildren(elements, unique, maxDepth) {
         return children;
       }
     }
-  });
+  },0);
 
   return result;
 }
@@ -92,7 +92,9 @@ export function selfAndChildren(elements, unique, maxDepth) {
  *
  * @return {Array<djs.model.Base>} the collected elements
  */
-export function selfAndDirectChildren(elements, allowDuplicates) {
+export function selfAndDirectChildren(elements: any , allowDuplicates: boolean
+
+) {
   return selfAndChildren(elements, !allowDuplicates, 1);
 }
 
@@ -105,8 +107,8 @@ export function selfAndDirectChildren(elements, allowDuplicates) {
  *
  * @return {Array<djs.model.Base>} the collected elements
  */
-export function selfAndAllChildren(elements, allowDuplicates) {
-  return selfAndChildren(elements, !allowDuplicates, -1);
+export function selfAndAllChildren(elements: any, allowDuplicates:boolean) {
+  return selfAndChildren(elements, !allowDuplicates , -1);
 }
 
 
@@ -117,17 +119,17 @@ export function selfAndAllChildren(elements, allowDuplicates) {
  * @param {Array<djs.model.Base>} elements
  * @return {Object} enclosure
  */
-export function getClosure(elements) {
+export function getClosure(elements:any) {
 
   // original elements passed to this function
-  var topLevel = groupBy(elements, function(e) { return e.id; });
+  var topLevel = groupBy(elements, function(e:any) { return e.id; });
 
-  var allShapes = {},
-      allConnections = {},
-      enclosedElements = {},
-      enclosedConnections = {};
+  var allShapes:any = {},
+      allConnections:any = {},
+      enclosedElements: any = {},
+      enclosedConnections :any = {};
 
-  function handleConnection(c) {
+  function handleConnection(c: any) {
     if (topLevel[c.source.id] && topLevel[c.target.id]) {
       topLevel[c.id] = [ c ];
     }
@@ -141,7 +143,7 @@ export function getClosure(elements) {
     allConnections[c.id] = c;
   }
 
-  function handleElement(element) {
+  function handleElement(element: any) {
 
     enclosedElements[element.id] = element;
 
@@ -162,7 +164,7 @@ export function getClosure(elements) {
     }
   }
 
-  eachElement(elements, handleElement);
+  eachElement(elements, handleElement, 0);
 
   return {
     allShapes: allShapes,
@@ -180,19 +182,19 @@ export function getClosure(elements) {
  * @param {Array<djs.model.Shape>|djs.model.Shape} elements
  * @param {Boolean} stopRecursion
  */
-export function getBBox(elements, stopRecursion) {
+export function getBBox(elements : any, stopRecursion: any) {
 
   stopRecursion = !!stopRecursion;
   if (!isArray(elements)) {
     elements = [elements];
   }
 
-  var minX,
-      minY,
-      maxX,
-      maxY;
+  var minX: any,
+      minY: any,
+      maxX: any,
+      maxY: any;
 
-  forEach(elements, function(element) {
+  forEach(elements, function(element: any) {
 
     // If element is a connection the bbox must be computed first
     var bbox = element;
@@ -242,16 +244,16 @@ export function getBBox(elements, stopRecursion) {
  *
  * @return {Array<djs.model.Shape>} enclosed elements
  */
-export function getEnclosedElements(elements, bbox) {
+export function getEnclosedElements(elements: any, bbox: any) {
 
-  var filteredElements = {};
+  var filteredElements: any = {};
 
-  forEach(elements, function(element) {
+  forEach(elements, function(element: any) {
 
     var e = element;
 
     if (e.waypoints) {
-      e = getBBox(e);
+      e = getBBox(e, null);
     }
 
     if (!isNumber(bbox.y) && (e.x > bbox.x)) {
@@ -276,7 +278,7 @@ export function getEnclosedElements(elements, bbox) {
 }
 
 
-export function getType(element) {
+export function getType(element: any) {
 
   if ('waypoints' in element) {
     return 'connection';

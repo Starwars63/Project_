@@ -14,7 +14,7 @@
  *
  * @return {Array<Object>} the cleared collection
  */
-export function saveClear(collection, removeFn) {
+export function saveClear(collection:any, removeFn:any) {
 
   if (typeof removeFn !== 'function') {
     throw new Error('removeFn iterator must be a function');

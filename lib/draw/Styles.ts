@@ -10,7 +10,7 @@ import {
  */
 export default function Styles() {
 
-  var defaultTraits = {
+  var defaultTraits:any = {
 
     'no-fill': {
       fill: 'none'
@@ -34,7 +34,7 @@ export default function Styles() {
    *
    * @return {Object} the style defintion
    */
-  this.cls = function(className, traits, additionalAttrs) {
+  this.cls = function(className:string, traits:any, additionalAttrs:any) {
     var attrs = this.style(traits, additionalAttrs);
 
     return assign(attrs, { 'class': className });
@@ -48,21 +48,21 @@ export default function Styles() {
    *
    * @return {Object} the style defintion
    */
-  this.style = function(traits, additionalAttrs) {
+  this.style = function(traits:any, additionalAttrs:any) {
 
     if (!isArray(traits) && !additionalAttrs) {
       additionalAttrs = traits;
       traits = [];
     }
 
-    var attrs = reduce(traits, function(attrs, t) {
+    let attrs = reduce(traits, function(attrs:any, t:any) {
       return assign(attrs, defaultTraits[t] || {});
     }, {});
 
     return additionalAttrs ? assign(attrs, additionalAttrs) : attrs;
   };
 
-  this.computeStyle = function(custom, traits, defaultStyles) {
+  this.computeStyle = function(custom:any, traits:any, defaultStyles:any) {
     if (!isArray(traits)) {
       defaultStyles = traits;
       traits = [];

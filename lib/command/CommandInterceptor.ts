@@ -7,7 +7,7 @@ import {
 } from 'min-dash';
 
 
-var DEFAULT_PRIORITY = 1000;
+let DEFAULT_PRIORITY = 1000;
 
 /**
  * A utility that can be used to plug-in into the command execution for
@@ -32,30 +32,54 @@ var DEFAULT_PRIORITY = 1000;
  * inherits(CommandLogger, CommandInterceptor);
  *
  */
-export default function CommandInterceptor(eventBus) {
+export default class CommandInterceptor{
+constructor(eventBus:any) {
   this._eventBus = eventBus;
+
+  forEach(this.hooks, function(hook) {
+
+    /**
+     * {canExecute|preExecute|preExecuted|execute|executed|postExecute|postExecuted|revert|reverted}
+     *
+     * A named hook for plugging into the command execution
+     *
+     * @param {String|Array<String>} [events] list of commands to register on
+     * @param {Number} [priority] the priority on which to hook into the execution
+     * @param {Function} handlerFn interceptor to be invoked with (event)
+     * @param {Boolean} [unwrap=false] if true, unwrap the event and pass (context, command, event) to the
+     *                          listener instead
+     * @param {Object} [that] Pass context (`this`) to the handler function
+     */
+    this[hook] = function(events:any, priority:any, handlerFn:any, unwrap:boolean, that:any):any {
+
+      if (isFunction(events) || isNumber(events)) {
+        that = unwrap;
+        unwrap = handlerFn;
+        handlerFn = priority;
+        priority = events;
+        events = null;
+      }
+  
+      this.on(events, hook, priority, handlerFn, unwrap, that);
+    };
+  });
 }
+_eventBus: any;
+prototype:any;
+ hooks = [
+  'canExecute',
+  'preExecute',
+  'preExecuted',
+  'execute',
+  'executed',
+  'postExecute',
+  'postExecuted',
+  'revert',
+  'reverted'
+];
+static $inject = [ 'eventBus' ];
 
-CommandInterceptor.$inject = [ 'eventBus' ];
-
-function unwrapEvent(fn, that) {
-  return function(event) {
-    return fn.call(that || null, event.context, event.command, event);
-  };
-}
-
-/**
- * Register an interceptor for a command execution
- *
- * @param {String|Array<String>} [events] list of commands to register on
- * @param {String} [hook] command hook, i.e. preExecute, executed to listen on
- * @param {Number} [priority] the priority on which to hook into the execution
- * @param {Function} handlerFn interceptor to be invoked with (event)
- * @param {Boolean} unwrap if true, unwrap the event and pass (context, command, event) to the
- *                          listener instead
- * @param {Object} [that] Pass context (`this`) to the handler function
- */
-CommandInterceptor.prototype.on = function(events, hook, priority, handlerFn, unwrap, that) {
+on = function(events: any , hook:string, priority:any, handlerFn:any, unwrap:boolean, that:any) {
 
   if (isFunction(hook) || isNumber(hook)) {
     that = unwrap;
@@ -85,28 +109,35 @@ CommandInterceptor.prototype.on = function(events, hook, priority, handlerFn, un
     events = [ events ];
   }
 
-  var eventBus = this._eventBus;
+  let eventBus = this._eventBus;
 
   forEach(events, function(event) {
     // concat commandStack(.event)?(.hook)?
-    var fullEvent = [ 'commandStack', event, hook ].filter(function(e) { return e; }).join('.');
+    let fullEvent = [ 'commandStack', event, hook ].filter(function(e) { return e; }).join('.');
 
     eventBus.on(fullEvent, priority, unwrap ? unwrapEvent(handlerFn, that) : handlerFn, that);
   });
 };
+}
+
+function unwrapEvent(fn:any , that:any):any {
+  return function(event:any) {
+    return fn.call(that || null, event.context, event.command, event);
+  };
+/**
+ * Register an interceptor for a command execution
+ *
+ * @param {String|Array<String>} [events] list of commands to register on
+ * @param {String} [hook] command hook, i.e. preExecute, executed to listen on
+ * @param {Number} [priority] the priority on which to hook into the execution
+ * @param {Function} handlerFn interceptor to be invoked with (event)
+ * @param {Boolean} unwrap if true, unwrap the event and pass (context, command, event) to the
+ *                          listener instead
+ * @param {Object} [that] Pass context (`this`) to the handler function
+ */
 
 
-var hooks = [
-  'canExecute',
-  'preExecute',
-  'preExecuted',
-  'execute',
-  'executed',
-  'postExecute',
-  'postExecuted',
-  'revert',
-  'reverted'
-];
+
 
 /*
  * Install hook shortcuts
@@ -114,30 +145,5 @@ var hooks = [
  * This will generate the CommandInterceptor#(preExecute|...|reverted) methods
  * which will in term forward to CommandInterceptor#on.
  */
-forEach(hooks, function(hook) {
 
-  /**
-   * {canExecute|preExecute|preExecuted|execute|executed|postExecute|postExecuted|revert|reverted}
-   *
-   * A named hook for plugging into the command execution
-   *
-   * @param {String|Array<String>} [events] list of commands to register on
-   * @param {Number} [priority] the priority on which to hook into the execution
-   * @param {Function} handlerFn interceptor to be invoked with (event)
-   * @param {Boolean} [unwrap=false] if true, unwrap the event and pass (context, command, event) to the
-   *                          listener instead
-   * @param {Object} [that] Pass context (`this`) to the handler function
-   */
-  CommandInterceptor.prototype[hook] = function(events, priority, handlerFn, unwrap, that) {
-
-    if (isFunction(events) || isNumber(events)) {
-      that = unwrap;
-      unwrap = handlerFn;
-      handlerFn = priority;
-      priority = events;
-      events = null;
-    }
-
-    this.on(events, hook, priority, handlerFn, unwrap, that);
-  };
-});
+}

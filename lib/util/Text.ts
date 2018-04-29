@@ -4,26 +4,26 @@ import {
   pick,
   forEach,
   reduce
-} from 'min-dash';
+} from "min-dash";
 
 import {
   append as svgAppend,
   attr as svgAttr,
   create as svgCreate,
   remove as svgRemove
-} from 'tiny-svg';
+} from "tiny-svg";
 
-var DEFAULT_BOX_PADDING = 0;
+let DEFAULT_BOX_PADDING = 0;
 
-var DEFAULT_LABEL_SIZE = {
+let DEFAULT_LABEL_SIZE = {
   width: 150,
   height: 50
 };
 
 
-function parseAlign(align) {
+function parseAlign(align:any) {
 
-  var parts = align.split('-');
+  let parts = align.split('-');
 
   return {
     horizontal: parts[0] || 'center',
@@ -31,7 +31,7 @@ function parseAlign(align) {
   };
 }
 
-function parsePadding(padding) {
+function parsePadding(padding:any) {
 
   if (isObject(padding)) {
     return assign({ top: 0, left: 0, right: 0, bottom: 0 }, padding);
@@ -45,7 +45,7 @@ function parsePadding(padding) {
   }
 }
 
-function getTextBBox(text, fakeText) {
+function getTextBBox(text: any, fakeText:any) {
 
   fakeText.textContent = text;
 
@@ -78,7 +78,7 @@ function getTextBBox(text, fakeText) {
  * @param  {Array<String>} lines
  * @return {Object} the line descriptor, an object { width, height, text }
  */
-function layoutNext(lines, maxWidth, fakeText) {
+function layoutNext(lines: any, maxWidth: any, fakeText:any) {
 
   var originalLine = lines.shift(),
       fitLine = originalLine;
@@ -99,7 +99,7 @@ function layoutNext(lines, maxWidth, fakeText) {
   }
 }
 
-function fit(lines, fitLine, originalLine, textBBox) {
+function fit(lines:any, fitLine:any, originalLine:any, textBBox:any) {
   if (fitLine.length < originalLine.length) {
     var remainder = originalLine.slice(fitLine.length).trim();
 
@@ -117,7 +117,7 @@ function fit(lines, fitLine, originalLine, textBBox) {
  * @param  {Number} maxLength the maximum characters of the string
  * @return {String} the shortened string
  */
-function semanticShorten(line, maxLength) {
+function semanticShorten(line:any, maxLength:any) {
   var parts = line.split(/(\s|-)/g),
       part,
       shortenedParts = [],
@@ -144,11 +144,11 @@ function semanticShorten(line, maxLength) {
 }
 
 
-function shortenLine(line, width, maxWidth) {
+function shortenLine(line:any, width:any, maxWidth:any) {
   var length = Math.max(line.length * (maxWidth / width), 1);
 
   // try to shorten semantically (i.e. based on spaces and hyphens)
-  var shortenedLine = semanticShorten(line, length);
+  let shortenedLine = semanticShorten(line, length);
 
   if (!shortenedLine) {
 
@@ -161,19 +161,19 @@ function shortenLine(line, width, maxWidth) {
 
 
 function getHelperSvg() {
-  var helperSvg = document.getElementById('helper-svg');
+  let helperSvg:HTMLElement = document.getElementById('helper-svg');
 
   if (!helperSvg) {
-    helperSvg = svgCreate('svg');
+   let chelperSvg: SVGElement = svgCreate('svg');
 
-    svgAttr(helperSvg, {
+    svgAttr(chelperSvg, {
       id: 'helper-svg',
       width: 0,
       height: 0,
       style: 'visibility: hidden; position: fixed'
     });
 
-    document.body.appendChild(helperSvg);
+    document.body.appendChild(chelperSvg);
   }
 
   return helperSvg;
@@ -189,7 +189,7 @@ function getHelperSvg() {
  * @param {Object} config.style
  * @param {String} config.align
  */
-export default function Text(config) {
+export default function Text(config:any) {
 
   this._config = assign({}, {
     size: DEFAULT_LABEL_SIZE,
@@ -207,7 +207,7 @@ export default function Text(config) {
  *
  * @return {SVGElement}
  */
-Text.prototype.createText = function(text, options) {
+Text.prototype.createText = function(text:any, options:any) {
   return this.layoutText(text, options).element;
 };
 
@@ -219,7 +219,7 @@ Text.prototype.createText = function(text, options) {
  *
  * @return {Dimensions}
  */
-Text.prototype.getDimensions = function(text, options) {
+Text.prototype.getDimensions = function(text:any, options:any) {
   return this.layoutText(text, options).dimensions;
 };
 
@@ -239,24 +239,24 @@ Text.prototype.getDimensions = function(text, options) {
  *
  * @return {Object} { element, dimensions }
  */
-Text.prototype.layoutText = function(text, options) {
-  var box = assign({}, this._config.size, options.box),
+Text.prototype.layoutText = function(text:any, options:any) {
+  let box = assign({}, this._config.size, options.box),
       style = assign({}, this._config.style, options.style),
       align = parseAlign(options.align || this._config.align),
       padding = parsePadding(options.padding !== undefined ? options.padding : this._config.padding),
       fitBox = options.fitBox || false;
 
-  var lines = text.split(/\r?\n/g),
+  let lines = text.split(/\r?\n/g),
       layouted = [];
 
-  var maxWidth = box.width - padding.left - padding.right;
+  let maxWidth = box.width - padding.left - padding.right;
 
   // ensure correct rendering by attaching helper text node to invisible SVG
-  var helperText = svgCreate('text');
+  let helperText = svgCreate('text');
   svgAttr(helperText, { x: 0, y: 0 });
   svgAttr(helperText, style);
 
-  var helperSvg = getHelperSvg();
+  let helperSvg = getHelperSvg();
 
   svgAppend(helperSvg, helperText);
 
@@ -264,16 +264,16 @@ Text.prototype.layoutText = function(text, options) {
     layouted.push(layoutNext(lines, maxWidth, helperText));
   }
 
-  var totalHeight = reduce(layouted, function(sum, line, idx) {
+  let totalHeight = reduce(layouted, function(sum:any, line:any, idx:any) {
     return sum + line.height;
-  }, 0);
+  }, null);
 
-  var maxLineWidth = reduce(layouted, function(sum, line, idx) {
+  let maxLineWidth = reduce(layouted, function(sum:any, line:any, idx:any) {
     return line.width > sum ? line.width : sum;
-  }, 0);
+  }, null);
 
   // the y position of the next line
-  var y, x;
+  let y: any, x:any;
 
   switch (align.vertical) {
   case 'middle':
@@ -284,13 +284,13 @@ Text.prototype.layoutText = function(text, options) {
     y = padding.top;
   }
 
-  var textElement = svgCreate('text');
+  let textElement = svgCreate('text');
 
   svgAttr(textElement, style);
 
   // layout each line taking into account that parent
   // shape might resize to fit text size
-  forEach(layouted, function(line) {
+  forEach(layouted, function(line:any) {
     y += line.height;
 
     switch (align.horizontal) {
@@ -309,8 +309,8 @@ Text.prototype.layoutText = function(text, options) {
         - line.width) / 2 + padding.left), 0);
     }
 
-    var tspan = svgCreate('tspan');
-    svgAttr(tspan, { x: x, y: y });
+    let tspan = svgCreate('tspan');
+    svgAttr(tspan, { x , y });
 
     tspan.textContent = line.text;
 
@@ -319,7 +319,7 @@ Text.prototype.layoutText = function(text, options) {
 
   svgRemove(helperText);
 
-  var dimensions = {
+  let dimensions = {
     width: maxLineWidth,
     height: totalHeight
   };

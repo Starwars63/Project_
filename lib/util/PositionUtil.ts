@@ -1,4 +1,4 @@
-export function center(bounds) {
+export function center(bounds:any) {
   return {
     x: bounds.x + (bounds.width / 2),
     y: bounds.y + (bounds.height / 2)
@@ -6,7 +6,7 @@ export function center(bounds) {
 }
 
 
-export function delta(a, b) {
+export function delta(a:any, b:any) {
   return {
     x: a.x - b.x,
     y: a.y - b.y

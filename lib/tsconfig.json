@@ -1,17 +1,20 @@
 {
+    "compileOnSave": false,
     "compilerOptions": {
         "outDir": "./built",
-            "allowJs": true,
-                "target": "es5",
-                    "noImplicitReturns": true,
-                        "noImplicitAny": true,
-                            "noEmitOnError": true,
+        "allowJs": true,
+        "target": "ES6",
+        "noImplicitReturns": true,
+        "noImplicitAny": true,
+        "noEmitOnError": true,
         "module": "commonjs",
         "removeComments": true,
         "allowUnreachableCode": true,
-            "inlineSourceMap": true,
-                                    "moduleResolution": "node"
+        
+        "inlineSourceMap": true,
+        "moduleResolution": "node"
     },
+    
 
-    "include": ["./**/*"]
+    "include": [ "./**/*" ]
 }

@@ -1,4 +1,4 @@
-import ZoomScroll from './ZoomScroll';
+import ZoomScroll from "./ZoomScroll";
 
 export default {
   __init__: [ 'zoomScroll' ],

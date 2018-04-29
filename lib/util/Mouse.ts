@@ -1,23 +1,23 @@
 import {
   getOriginal as getOriginalEvent
-} from './Event';
+} from "./Event";
 
 import {
   isMac
-} from './Platform';
+} from "./Platform";
 
 export {
   isMac
-} from './Platform';
+} from "./Platform";
 
 
-export function isPrimaryButton(event) {
+export function isPrimaryButton(event:any) {
   // button === 0 -> left áka primary mouse button
   return !(getOriginalEvent(event) || event).button;
 }
 
-export function hasPrimaryModifier(event) {
-  var originalEvent = getOriginalEvent(event) || event;
+export function hasPrimaryModifier(event: any) {
+  let originalEvent = getOriginalEvent(event) || event;
 
   if (!isPrimaryButton(event)) {
     return false;
@@ -32,7 +32,7 @@ export function hasPrimaryModifier(event) {
 }
 
 
-export function hasSecondaryModifier(event) {
+export function hasSecondaryModifier(event:any) {
   var originalEvent = getOriginalEvent(event) || event;
 
   return isPrimaryButton(event) && originalEvent.shiftKey;

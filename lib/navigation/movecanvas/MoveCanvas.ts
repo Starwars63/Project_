@@ -1,54 +1,56 @@
 import {
   set as cursorSet,
   unset as cursorUnset
-} from '../../util/Cursor';
+} from "../../util/Cursor";
 
 import {
   install as installClickTrap
-} from '../../util/ClickTrap';
+} from "../../util/ClickTrap";
 
 import {
   delta as deltaPos
-} from '../../util/PositionUtil';
+} from "../../util/PositionUtil";
 
 import {
   event as domEvent,
   closest as domClosest
-} from 'min-dom';
+} from "min-dom";
 
 import {
   toPoint
-} from '../../util/Event';
+} from "../../util/Event";
+import { eventNames } from "cluster";
 
 
-function length(point) {
+function length(point:any ) {
   return Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
 }
 
-var THRESHOLD = 15;
+let THRESHOLD = 15;
 
 
-export default function MoveCanvas(eventBus, canvas) {
+export default class MoveCanvas{
+constructor (eventBus:any, canvas:any) {
 
-  var context;
+  let context:any;
 
-  function handleMove(event) {
+  function handleMove(event:any) {
 
-    var start = context.start,
+    let start = context.start,
         position = toPoint(event),
         delta = deltaPos(position, start);
 
     if (!context.dragging && length(delta) > THRESHOLD) {
       context.dragging = true;
 
-      installClickTrap(eventBus);
+      installClickTrap(eventBus,"");
 
       cursorSet('grab');
     }
 
     if (context.dragging) {
 
-      var lastPosition = context.last || context.start;
+      let lastPosition = context.last || context.start;
 
       delta = deltaPos(position, lastPosition);
 
@@ -65,7 +67,7 @@ export default function MoveCanvas(eventBus, canvas) {
   }
 
 
-  function handleEnd(event) {
+  function handleEnd(event: any) {
     domEvent.unbind(document, 'mousemove', handleMove);
     domEvent.unbind(document, 'mouseup', handleEnd);
 
@@ -74,16 +76,16 @@ export default function MoveCanvas(eventBus, canvas) {
     cursorUnset();
   }
 
-  function handleStart(event) {
+  function handleStart(event:any) {
     // event is already handled by '.djs-draggable'
     if (domClosest(event.target, '.djs-draggable')) {
-      return;
+      return false;
     }
 
 
     // reject non-left left mouse button or modifier key
     if (event.button || event.ctrlKey || event.shiftKey || event.altKey) {
-      return;
+      return false;
     }
 
     context = {
@@ -100,11 +102,12 @@ export default function MoveCanvas(eventBus, canvas) {
   // listen for move on element mouse down;
   // allow others to hook into the event before us though
   // (dragging / element moving will do this)
-  eventBus.on('element.mousedown', 500, function(e) {
+  eventBus.on('element.mousedown', 500, function(e:any) {
     return handleStart(e.originalEvent);
   });
 
 }
 
 
-MoveCanvas.$inject = [ 'eventBus', 'canvas' ];
+ static $inject = [ 'eventBus', 'canvas' ];
+}

@@ -1,4 +1,4 @@
-import inherits from 'inherits';
+import {inherits} from 'inherits';
 
 import BaseRenderer from './BaseRenderer';
 
@@ -23,24 +23,27 @@ var DEFAULT_RENDER_PRIORITY = 1;
  * @param {EventBus} eventBus
  * @param {Styles} styles
  */
-export default function DefaultRenderer(eventBus, styles) {
+export default class DefaultRenderer{
+constructor(eventBus:any, styles:any) {
   //
   BaseRenderer.call(this, eventBus, DEFAULT_RENDER_PRIORITY);
 
   this.CONNECTION_STYLE = styles.style([ 'no-fill' ], { strokeWidth: 5, stroke: 'fuchsia' });
   this.SHAPE_STYLE = styles.style({ fill: 'white', stroke: 'fuchsia', strokeWidth: 2 });
 }
+CONNECTION_STYLE:any ;
+SHAPE_STYLE:any
 
-inherits(DefaultRenderer, BaseRenderer);
 
 
-DefaultRenderer.prototype.canRender = function() {
+
+canRender = function() {
   return true;
 };
 
-DefaultRenderer.prototype.drawShape = function drawShape(visuals, element) {
+drawShape = function drawShape(visuals:any, element:any) {
 
-  var rect = svgCreate('rect');
+  let rect:any = svgCreate('rect');
   svgAttr(rect, {
     x: 0,
     y: 0,
@@ -54,22 +57,23 @@ DefaultRenderer.prototype.drawShape = function drawShape(visuals, element) {
   return rect;
 };
 
-DefaultRenderer.prototype.drawConnection = function drawConnection(visuals, connection) {
 
-  var line = createLine(connection.waypoints, this.CONNECTION_STYLE);
+drawConnection = function drawConnection(visuals:any, connection:any) {
+
+  let line = createLine(connection.waypoints, this.CONNECTION_STYLE);
   svgAppend(visuals, line);
 
   return line;
 };
 
-DefaultRenderer.prototype.getShapePath = function getShapePath(shape) {
+getShapePath = function getShapePath(shape:any) {
 
-  var x = shape.x,
+  let x = shape.x,
       y = shape.y,
       width = shape.width,
       height = shape.height;
 
-  var shapePath = [
+  let shapePath = [
     ['M', x, y],
     ['l', width, 0],
     ['l', 0, height],
@@ -79,11 +83,10 @@ DefaultRenderer.prototype.getShapePath = function getShapePath(shape) {
 
   return componentsToPath(shapePath);
 };
+getConnectionPath = function getConnectionPath(connection:any) {
+  let waypoints = connection.waypoints;
 
-DefaultRenderer.prototype.getConnectionPath = function getConnectionPath(connection) {
-  var waypoints = connection.waypoints;
-
-  var idx, point, connectionPath = [];
+  let idx, point, connectionPath = [];
 
   for (idx = 0; (point = waypoints[idx]); idx++) {
 
@@ -98,4 +101,6 @@ DefaultRenderer.prototype.getConnectionPath = function getConnectionPath(connect
 };
 
 
-DefaultRenderer.$inject = [ 'eventBus', 'styles' ];
+static $inject = [ 'eventBus', 'styles' ];
+}
+inherits(DefaultRenderer, BaseRenderer);

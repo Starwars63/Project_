@@ -27,15 +27,19 @@ import {
  * @param {EventBus} eventBus
  * @param {ElementRegistry} elementRegistry
  */
-export default function GraphicsFactory(eventBus, elementRegistry) {
+export default class GraphicsFactory{
+constructor(eventBus: any, elementRegistry:any) {
   this._eventBus = eventBus;
   this._elementRegistry = elementRegistry;
 }
+_eventBus:any;
+_elementRegistry:any;
 
-GraphicsFactory.$inject = [ 'eventBus' , 'elementRegistry' ];
+
+static $inject = [ 'eventBus' , 'elementRegistry' ];
 
 
-GraphicsFactory.prototype._getChildren = function(element) {
+_getChildren = function(element:any) {
 
   var gfx = this._elementRegistry.getGraphics(element);
 
@@ -61,8 +65,8 @@ GraphicsFactory.prototype._getChildren = function(element) {
  * Clears the graphical representation of the element and returns the
  * cleared visual (the <g class="djs-visual" /> element).
  */
-GraphicsFactory.prototype._clear = function(gfx) {
-  var visual = getVisual(gfx);
+_clear = function(gfx:any) {
+  let visual = getVisual(gfx);
 
   domClear(visual);
 
@@ -93,8 +97,8 @@ GraphicsFactory.prototype._clear = function(gfx) {
  * @param {String} type the type of the element, i.e. shape | connection
  * @param {Number} [parentIndex] position to create container in parent
  */
-GraphicsFactory.prototype._createContainer = function(type, childrenGfx, parentIndex) {
-  var outerGfx = svgCreate('g');
+_createContainer = function(type: string, childrenGfx:any, parentIndex:number) {
+  let outerGfx = svgCreate('g');
   svgClasses(outerGfx).add('djs-group');
 
   // insert node at position
@@ -104,14 +108,14 @@ GraphicsFactory.prototype._createContainer = function(type, childrenGfx, parentI
     svgAppend(childrenGfx, outerGfx);
   }
 
-  var gfx = svgCreate('g');
+  let gfx = svgCreate('g');
   svgClasses(gfx).add('djs-element');
   svgClasses(gfx).add('djs-' + type);
 
   svgAppend(outerGfx, gfx);
 
   // create visual
-  var visual = svgCreate('g');
+  let visual = svgCreate('g');
   svgClasses(visual).add('djs-visual');
 
   svgAppend(gfx, visual);
@@ -119,18 +123,18 @@ GraphicsFactory.prototype._createContainer = function(type, childrenGfx, parentI
   return gfx;
 };
 
-GraphicsFactory.prototype.create = function(type, element, parentIndex) {
+create = function(type:any, element:any, parentIndex:any) {
   var childrenGfx = this._getChildren(element.parent);
   return this._createContainer(type, childrenGfx, parentIndex);
 };
 
-GraphicsFactory.prototype.updateContainments = function(elements) {
+updateContainments = function(elements:any) {
 
   var self = this,
       elementRegistry = this._elementRegistry,
       parents;
 
-  parents = reduce(elements, function(map, e) {
+  parents = reduce(elements, function(map:any, e:any) {
 
     if (e.parent) {
       map[e.parent.id] = e.parent;
@@ -141,49 +145,49 @@ GraphicsFactory.prototype.updateContainments = function(elements) {
 
   // update all parents of changed and reorganized their children
   // in the correct order (as indicated in our model)
-  forEach(parents, function(parent) {
+  forEach(parents, function(parent:any) {
 
-    var children = parent.children;
+    let children = parent.children;
 
     if (!children) {
       return;
     }
 
-    var childGfx = self._getChildren(parent);
+    let childGfx = self._getChildren(parent);
 
-    forEach(children.slice().reverse(), function(c) {
-      var gfx = elementRegistry.getGraphics(c);
+    forEach(children.slice().reverse(), function(c:any) {
+      let gfx = elementRegistry.getGraphics(c);
 
-      prependTo(gfx.parentNode, childGfx);
+      prependTo(gfx.parentNode, childGfx,null);
     });
   });
 };
 
-GraphicsFactory.prototype.drawShape = function(visual, element) {
+drawShape = function(visual:any, element:any) {
   var eventBus = this._eventBus;
 
   return eventBus.fire('render.shape', { gfx: visual, element: element });
 };
 
-GraphicsFactory.prototype.getShapePath = function(element) {
+getShapePath = function(element:any) {
   var eventBus = this._eventBus;
 
   return eventBus.fire('render.getShapePath', element);
 };
 
-GraphicsFactory.prototype.drawConnection = function(visual, element) {
+drawConnection = function(visual:any, element:any) {
   var eventBus = this._eventBus;
 
   return eventBus.fire('render.connection', { gfx: visual, element: element });
 };
 
-GraphicsFactory.prototype.getConnectionPath = function(waypoints) {
+getConnectionPath = function(waypoints:any) {
   var eventBus = this._eventBus;
 
   return eventBus.fire('render.getConnectionPath', waypoints);
 };
 
-GraphicsFactory.prototype.update = function(type, element, gfx) {
+update = function(type:any, element:any, gfx:any) {
   // Do not update root element
   if (!element.parent) {
     return;
@@ -211,7 +215,7 @@ GraphicsFactory.prototype.update = function(type, element, gfx) {
   }
 };
 
-GraphicsFactory.prototype.remove = function(element) {
+remove = function(element:any) {
   var gfx = this._elementRegistry.getGraphics(element);
 
   // remove
@@ -221,6 +225,8 @@ GraphicsFactory.prototype.remove = function(element) {
 
 // helpers //////////////////////
 
-function prependTo(newNode, parentNode, siblingNode) {
+}
+
+function prependTo(newNode:any, parentNode:any, siblingNode:any) {
   parentNode.insertBefore(newNode, siblingNode || parentNode.firstChild);
 }

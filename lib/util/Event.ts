@@ -1,4 +1,4 @@
-function __stopPropagation(event) {
+function __stopPropagation(event: any) {
   if (!event || typeof event.stopPropagation !== 'function') {
     return;
   }
@@ -7,18 +7,18 @@ function __stopPropagation(event) {
 }
 
 
-export function getOriginal(event) {
+export function getOriginal(event: any) {
   return event.originalEvent || event.srcEvent;
 }
 
 
-export function stopPropagation(event, immediate) {
-  __stopPropagation(event, immediate);
-  __stopPropagation(getOriginal(event), immediate);
+export function stopPropagation(event: any, immediate: any) {
+  __stopPropagation(event);
+  __stopPropagation(getOriginal(event));
 }
 
 
-export function toPoint(event) {
+export function toPoint(event: any) {
 
   if (event.pointers && event.pointers.length) {
     event = event.pointers[0];

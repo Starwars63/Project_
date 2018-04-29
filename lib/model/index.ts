@@ -1,13 +1,13 @@
-import { assign } from 'min-dash';
-import inherits from 'inherits';
+import { assign } from "min-dash";
+import {inherits} from "inherits";
 
-import Refs from 'object-refs';
+import {Refs} from "object-refs";
 
-var parentRefs = new Refs({ name: 'children', enumerable: true, collection: true }, { name: 'parent' }),
-    labelRefs = new Refs({ name: 'label', enumerable: true }, { name: 'labelTarget' }),
-    attacherRefs = new Refs({ name: 'attachers', collection: true }, { name: 'host' }),
-    outgoingRefs = new Refs({ name: 'outgoing', collection: true }, { name: 'source' }),
-    incomingRefs = new Refs({ name: 'incoming', collection: true }, { name: 'target' });
+var parentRefs:any  = Refs({ name: 'children', enumerable: true, collection: true }, { name: 'parent' }),
+    labelRefs:any =  Refs({ name: 'label', enumerable: true }, { name: 'labelTarget' }),
+    attacherRefs:any =Refs({ name: 'attachers', collection: true }, { name: 'host' }),
+    outgoingRefs:any = Refs({ name: 'outgoing', collection: true }, { name: 'source' }),
+    incomingRefs:any =  Refs({ name: 'incoming', collection: true }, { name: 'target' });
 
 /**
  * @namespace djs.model
@@ -24,7 +24,8 @@ var parentRefs = new Refs({ name: 'children', enumerable: true, collection: true
  *
  * @abstract
  */
-export function Base() {
+export class Base{
+  constructor() {
 
   /**
    * The object that backs up the shape
@@ -35,6 +36,7 @@ export function Base() {
   Object.defineProperty(this, 'businessObject', {
     writable: true
   });
+
 
   /**
    * The parent shape
@@ -66,7 +68,7 @@ export function Base() {
    */
   incomingRefs.bind(this, 'incoming');
 }
-
+}
 
 /**
  * A graphical object
@@ -76,7 +78,9 @@ export function Base() {
  *
  * @extends Base
  */
-export function Shape() {
+export class Shape
+ {
+   constructor(){
   Base.call(this);
 
   /**
@@ -99,6 +103,7 @@ export function Shape() {
    */
   attacherRefs.bind(this, 'attachers');
 }
+ }
 
 inherits(Shape, Base);
 
@@ -111,8 +116,10 @@ inherits(Shape, Base);
  *
  * @extends Shape
  */
-export function Root() {
+export class Root {
+  constructor(){
   Shape.call(this);
+}
 }
 
 inherits(Root, Shape);
@@ -126,7 +133,8 @@ inherits(Root, Shape);
  *
  * @extends Shape
  */
-export function Label() {
+export class Label {
+  constructor(){
   Shape.call(this);
 
   /**
@@ -136,6 +144,7 @@ export function Label() {
    * @type Base
    */
   labelRefs.bind(this, 'labelTarget');
+}
 }
 
 inherits(Label, Shape);
@@ -149,7 +158,8 @@ inherits(Label, Shape);
  *
  * @extends Base
  */
-export function Connection() {
+export class Connection {
+  constructor(){
   Base.call(this);
 
   /**
@@ -168,11 +178,12 @@ export function Connection() {
    */
   incomingRefs.bind(this, 'target');
 }
+}
 
 inherits(Connection, Base);
 
 
-var types = {
+let types: any = {
   connection: Connection,
   shape: Shape,
   label: Label,
@@ -196,8 +207,8 @@ var types = {
  *
  * @return {Base} the new model instance
  */
-export function create(type, attrs) {
-  var Type = types[type];
+export  function create(type: string , attrs:object) {
+  let Type : any= types[type];
   if (!Type) {
     throw new Error('unknown type: <' + type + '>');
   }

@@ -1,4 +1,4 @@
-var DEFAULT_RENDER_PRIORITY = 1000;
+let DEFAULT_RENDER_PRIORITY = 1000;
 
 /**
  * The base implementation of shape and connection renderers.
@@ -6,13 +6,13 @@ var DEFAULT_RENDER_PRIORITY = 1000;
  * @param {EventBus} eventBus
  * @param {Number} [renderPriority=1000]
  */
-export default function BaseRenderer(eventBus, renderPriority) {
-  var self = this;
+export default function BaseRenderer(eventBus:any, renderPriority:any) {
+  let self = this;
 
   renderPriority = renderPriority || DEFAULT_RENDER_PRIORITY;
 
-  eventBus.on([ 'render.shape', 'render.connection' ], renderPriority, function(evt, context) {
-    var type = evt.type,
+  eventBus.on([ 'render.shape', 'render.connection' ], renderPriority, function(evt:any, context:any) {
+    let type = evt.type,
         element = context.element,
         visuals = context.gfx;
 
@@ -25,7 +25,7 @@ export default function BaseRenderer(eventBus, renderPriority) {
     }
   });
 
-  eventBus.on([ 'render.getShapePath', 'render.getConnectionPath'], renderPriority, function(evt, element) {
+  eventBus.on([ 'render.getShapePath', 'render.getConnectionPath'], renderPriority, function(evt:any, element:any) {
     if (self.canRender(element)) {
       if (evt.type === 'render.getShapePath') {
         return self.getShapePath(element);

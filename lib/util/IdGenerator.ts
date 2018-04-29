@@ -9,7 +9,7 @@
  *
  * @param {String} prefix a prefix to prepend to generated ids (for better readability)
  */
-export default function IdGenerator(prefix) {
+export default function IdGenerator(prefix: any) {
 
   this._counter = 0;
   this._prefix = (prefix ? prefix + '-' : '') + Math.floor(Math.random() * 1000000000) + '-';

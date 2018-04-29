@@ -16,11 +16,11 @@
  *
  * @return {String} the translated string
  */
-export default function translate(template, replacements) {
+export default function translate(template:any  , replacements:any ) {
 
   replacements = replacements || {};
 
-  return template.replace(/{([^}]+)}/g, function(_, key) {
+  return template.replace(/{([^}]+)}/g, function(_:any , key:any) {
     return replacements[key] || '{' + key + '}';
   });
 }

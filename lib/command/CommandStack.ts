@@ -80,7 +80,8 @@ import {
  * @param {EventBus} eventBus
  * @param {Injector} injector
  */
-export default function CommandStack(eventBus, injector) {
+export default class CommandStack{
+constructor(eventBus:any, injector:any) {
 
   /**
    * A map of all registered command handlers.
@@ -112,7 +113,7 @@ export default function CommandStack(eventBus, injector) {
     actions: [],
     dirty: []
   };
-
+  
 
   this._injector = injector;
   this._eventBus = eventBus;
@@ -126,8 +127,14 @@ export default function CommandStack(eventBus, injector) {
     this.clear(false);
   }, this);
 }
-
-CommandStack.$inject = [ 'eventBus', 'injector' ];
+_handlerMap:any;
+_injector:any;
+_eventBus:any;
+_uid:any;
+_stack:any;
+_stackIdx:any;
+_currentExecution:any;
+static $inject = [ 'eventBus', 'injector' ];
 
 
 /**
@@ -136,12 +143,12 @@ CommandStack.$inject = [ 'eventBus', 'injector' ];
  * @param {String} command the command to execute
  * @param {Object} context the environment to execute the command in
  */
-CommandStack.prototype.execute = function(command, context) {
+execute = function(command:any, context:any) {
   if (!command) {
     throw new Error('command required');
   }
 
-  var action = { command: command, context: context };
+  let action = { command: command, context: context };
 
   this._pushAction(action);
   this._internalExecute(action);
@@ -169,13 +176,13 @@ CommandStack.prototype.execute = function(command, context) {
  *
  * @return {Boolean} true if the command can be executed
  */
-CommandStack.prototype.canExecute = function(command, context) {
+canExecute = function(command:any, context:any) {
 
-  var action = { command: command, context: context };
+  let action = { command: command, context: context };
 
-  var handler = this._getHandler(command);
+  let handler = this._getHandler(command);
 
-  var result = this._fire(command, 'canExecute', action);
+  let result = this._fire(command, 'canExecute', action);
 
   // handler#canExecute will only be called if no listener
   // decided on a result already
@@ -196,7 +203,7 @@ CommandStack.prototype.canExecute = function(command, context) {
 /**
  * Clear the command stack, erasing all undo / redo history
  */
-CommandStack.prototype.clear = function(emit) {
+clear = function(emit:any) {
   this._stack.length = 0;
   this._stackIdx = -1;
 
@@ -209,8 +216,8 @@ CommandStack.prototype.clear = function(emit) {
 /**
  * Undo last command(s)
  */
-CommandStack.prototype.undo = function() {
-  var action = this._getUndoAction(),
+undo = function() {
+  let action = this._getUndoAction(),
       next;
 
   if (action) {
@@ -235,8 +242,8 @@ CommandStack.prototype.undo = function() {
 /**
  * Redo last command(s)
  */
-CommandStack.prototype.redo = function() {
-  var action = this._getRedoAction(),
+redo = function() {
+  let action = this._getRedoAction(),
       next;
 
   if (action) {
@@ -264,7 +271,7 @@ CommandStack.prototype.redo = function() {
  * @param {String} command
  * @param {CommandHandler} handler
  */
-CommandStack.prototype.register = function(command, handler) {
+register = function(command:any, handler:any) {
   this._setHandler(command, handler);
 };
 
@@ -276,45 +283,44 @@ CommandStack.prototype.register = function(command, handler) {
  * @param {String} command
  * @param {Function} a constructor for a {@link CommandHandler}
  */
-CommandStack.prototype.registerHandler = function(command, handlerCls) {
+registerHandler = function(command:any, handlerCls:any) {
 
   if (!command || !handlerCls) {
     throw new Error('command and handlerCls must be defined');
   }
 
-  var handler = this._injector.instantiate(handlerCls);
+  let handler = this._injector.instantiate(handlerCls);
   this.register(command, handler);
 };
 
-CommandStack.prototype.canUndo = function() {
+canUndo = function() {
   return !!this._getUndoAction();
 };
 
-CommandStack.prototype.canRedo = function() {
+canRedo = function() {
   return !!this._getRedoAction();
 };
 
 // stack access  //////////////////////
 
-CommandStack.prototype._getRedoAction = function() {
+_getRedoAction = function() {
   return this._stack[this._stackIdx + 1];
 };
 
 
-CommandStack.prototype._getUndoAction = function() {
+_getUndoAction = function() {
   return this._stack[this._stackIdx];
 };
 
 
 // internal functionality //////////////////////
+_internalUndo = function(action:any) {
+  let self = this;
 
-CommandStack.prototype._internalUndo = function(action) {
-  var self = this;
-
-  var command = action.command,
+  let command = action.command,
       context = action.context;
 
-  var handler = this._getHandler(command);
+  let handler = this._getHandler(command);
 
   // guard against illegal nested command stack invocations
   this._atomicDo(function() {
@@ -331,13 +337,13 @@ CommandStack.prototype._internalUndo = function(action) {
 };
 
 
-CommandStack.prototype._fire = function(command, qualifier, event) {
+_fire = function(command:any, qualifier:any, even:any) {
   if (arguments.length < 3) {
     event = qualifier;
     qualifier = null;
   }
 
-  var names = qualifier ? [ command + '.' + qualifier, qualifier ] : [ command ],
+  let names = qualifier ? [ command + '.' + qualifier, qualifier ] : [ command ],
       i, name, result;
 
   event = this._eventBus.createEvent(event);
@@ -353,13 +359,12 @@ CommandStack.prototype._fire = function(command, qualifier, event) {
   return result;
 };
 
-CommandStack.prototype._createId = function() {
+_createId = function() {
   return this._uid++;
 };
+_atomicDo = function(fn:any) {
 
-CommandStack.prototype._atomicDo = function(fn) {
-
-  var execution = this._currentExecution;
+  let execution = this._currentExecution;
 
   execution.atomic = true;
 
@@ -370,13 +375,13 @@ CommandStack.prototype._atomicDo = function(fn) {
   }
 };
 
-CommandStack.prototype._internalExecute = function(action, redo) {
-  var self = this;
+_internalExecute = function(action:any, redo:any) {
+  let self = this;
 
-  var command = action.command,
+  let command = action.command,
       context = action.context;
 
-  var handler = this._getHandler(command);
+  let handler = this._getHandler(command);
 
   if (!handler) {
     throw new Error('no command handler registered for <' + command + '>');
@@ -424,12 +429,12 @@ CommandStack.prototype._internalExecute = function(action, redo) {
 };
 
 
-CommandStack.prototype._pushAction = function(action) {
+_pushAction = function(action:any) {
 
-  var execution = this._currentExecution,
+  let execution = this._currentExecution,
       actions = execution.actions;
 
-  var baseAction = actions[0];
+  let baseAction = actions[0];
 
   if (execution.atomic) {
     throw new Error('illegal invocation in <execute> or <revert> phase (action: ' + action.command + ')');
@@ -443,8 +448,8 @@ CommandStack.prototype._pushAction = function(action) {
 };
 
 
-CommandStack.prototype._popAction = function() {
-  var execution = this._currentExecution,
+_popAction = function() {
+  let execution = this._currentExecution,
       actions = execution.actions,
       dirty = execution.dirty;
 
@@ -460,8 +465,8 @@ CommandStack.prototype._popAction = function() {
 };
 
 
-CommandStack.prototype._markDirty = function(elements) {
-  var execution = this._currentExecution;
+_markDirty = function(elements:any) {
+  let execution = this._currentExecution;
 
   if (!elements) {
     return;
@@ -473,8 +478,8 @@ CommandStack.prototype._markDirty = function(elements) {
 };
 
 
-CommandStack.prototype._executedAction = function(action, redo) {
-  var stackIdx = ++this._stackIdx;
+_executedAction = function(action: any, redo:any) {
+  let stackIdx = ++this._stackIdx;
 
   if (!redo) {
     this._stack.splice(stackIdx, this._stack.length, action);
@@ -482,16 +487,16 @@ CommandStack.prototype._executedAction = function(action, redo) {
 };
 
 
-CommandStack.prototype._revertedAction = function(action) {
+_revertedAction = function(action:any) {
   this._stackIdx--;
 };
 
 
-CommandStack.prototype._getHandler = function(command) {
+_getHandler = function(command:any) {
   return this._handlerMap[command];
 };
 
-CommandStack.prototype._setHandler = function(command, handler) {
+_setHandler = function(command:any, handler:any) {
   if (!command || !handler) {
     throw new Error('command and handler required');
   }
@@ -502,3 +507,4 @@ CommandStack.prototype._setHandler = function(command, handler) {
 
   this._handlerMap[command] = handler;
 };
+}

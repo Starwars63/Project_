@@ -12,7 +12,7 @@ export default function CommandHandler() {}
  *
  * @return {Array<djs.model.Base>} list of touched (áka dirty) diagram elements
  */
-CommandHandler.prototype.execute = function(context) {};
+CommandHandler.prototype.execute = function(context:any) {};
 
 
 /**
@@ -22,7 +22,7 @@ CommandHandler.prototype.execute = function(context) {};
  *
  * @return {Array<djs.model.Base>} list of touched (áka dirty) diagram elements
  */
-CommandHandler.prototype.revert = function(context) {};
+CommandHandler.prototype.revert = function(context:any) {};
 
 
 /**
@@ -34,7 +34,7 @@ CommandHandler.prototype.revert = function(context) {};
  *
  * @return {Boolean} true if executing in the context is possible
  */
-CommandHandler.prototype.canExecute = function(context) {
+CommandHandler.prototype.canExecute = function(context:any) {
   return true;
 };
 
@@ -45,7 +45,7 @@ CommandHandler.prototype.canExecute = function(context) {
  *
  * @param {Object} context the execution context
  */
-CommandHandler.prototype.preExecute = function(context) {};
+CommandHandler.prototype.preExecute = function(context:any) {};
 
 /**
  * Execute actions after the actual command execution but
@@ -53,4 +53,4 @@ CommandHandler.prototype.preExecute = function(context) {};
  *
  * @param {Object} context the execution context
  */
-CommandHandler.prototype.postExecute = function(context) {};
+CommandHandler.prototype.postExecute = function(context:any) {};

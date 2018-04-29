@@ -6,13 +6,13 @@
  *
  * @return {Number} the previous index of the element
  */
-export function remove(collection, element) {
+export function remove(collection: any, element : any) :any {
 
   if (!collection || !element) {
     return -1;
   }
 
-  var idx = collection.indexOf(element);
+  let idx = collection.indexOf(element);
 
   if (idx !== -1) {
     collection.splice(idx, 1);
@@ -29,7 +29,7 @@ export function remove(collection, element) {
  * @param {Object} element
  * @param {Number} idx
  */
-export function add(collection, element, idx) {
+export function add(collection : any , element:any , idx:any) :any {
 
   if (!collection || !element) {
     return;
@@ -39,7 +39,7 @@ export function add(collection, element, idx) {
     idx = -1;
   }
 
-  var currentIdx = collection.indexOf(element);
+  let currentIdx = collection.indexOf(element);
 
   if (currentIdx !== -1) {
 
@@ -77,7 +77,7 @@ export function add(collection, element, idx) {
  * @return {Number} the index or -1 if collection or element do
  *                  not exist or the element is not contained.
  */
-export function indexOf(collection, element) {
+export function indexOf(collection: any , element:any) :any {
 
   if (!collection || !element) {
     return -1;
