@@ -4,15 +4,15 @@ import {
   sortBy
 } from 'min-dash';
 
-function last(arr) {
+function last(arr:any) {
   return arr && arr[arr.length - 1];
 }
 
-function sortTopOrMiddle(element) {
+function sortTopOrMiddle(element:any) {
   return element.y;
 }
 
-function sortLeftOrCenter(element) {
+function sortLeftOrCenter(element:any) {
   return element.x;
 }
 
@@ -23,25 +23,49 @@ function sortLeftOrCenter(element) {
  *
  * @return {Function}
  */
-var ALIGNMENT_SORTING = {
+let  ALIGNMENT_SORTING:any = {
   left: sortLeftOrCenter,
   center: sortLeftOrCenter,
-  right: function(element) {
+  
+  right: function(element:any) {
     return element.x + element.width;
   },
   top: sortTopOrMiddle,
   middle: sortTopOrMiddle,
-  bottom: function(element) {
+  bottom: function(element:any) {
     return element.y + element.height;
   }
 };
 
 
-export default function AlignElements(modeling) {
+export default class AlignElements{
+  constructor(modeling:any) {
   this._modeling = modeling;
 }
+_modeling:any;
 
-AlignElements.$inject = [ 'modeling' ];
+/**
+ * Executes the alignment of a selection of elements
+ *
+ * @param  {Array} elements [description]
+ * @param  {String} type left|right|center|top|bottom|middle
+ */
+trigger = function(elements:any, type:any) {
+  let  modeling = this._modeling;
+
+  let  filteredElements = filter(elements, function(element:any) {
+    return !(element.waypoints || element.host || element.labelTarget);
+  });
+
+  let  sortFn = ALIGNMENT_SORTING[type];
+
+  let  sortedElements = sortBy(filteredElements, sortFn);
+
+  let  alignment = this._alignmentPosition(type, sortedElements);
+
+  modeling.alignElements(sortedElements, alignment);
+};
+static $inject = [ 'modeling' ];
 
 
 /**
@@ -51,8 +75,8 @@ AlignElements.$inject = [ 'modeling' ];
  *
  * @return {Object} { axis, dimension }
  */
-AlignElements.prototype._getOrientationDetails = function(type) {
-  var vertical = [ 'top', 'bottom', 'middle' ],
+_getOrientationDetails = function(type:any) {
+  let  vertical = [ 'top', 'bottom', 'middle' ],
       axis = 'x',
       dimension = 'width';
 
@@ -67,7 +91,7 @@ AlignElements.prototype._getOrientationDetails = function(type) {
   };
 };
 
-AlignElements.prototype._isType = function(type, types) {
+_isType = function(type:any, types:any) {
   return types.indexOf(type) !== -1;
 };
 
@@ -79,18 +103,19 @@ AlignElements.prototype._isType = function(type, types) {
  *
  * @return {Object}
  */
-AlignElements.prototype._alignmentPosition = function(type, sortedElements) {
-  var orientation = this._getOrientationDetails(type),
-      axis = orientation.axis,
-      dimension = orientation.dimension,
-      alignment = {},
-      centers = {},
-      hasSharedCenters = false,
-      centeredElements,
-      firstElement,
-      lastElement;
+_alignmentPosition = function(type:any, sortedElements:any) {
+  let  orientation: any = this._getOrientationDetails(type),
+      axis :any = orientation.axis,
+      dimension:any = orientation.dimension,
+      alignment:any = {},
+      centers:any = {},
+      hasSharedCenters:any = false,
+      centeredElements:any,
+      firstElement:any,
+      lastElement:any;
+     
 
-  function getMiddleOrTop(first, last) {
+  function getMiddleOrTop(first:any, last:any) {
     return Math.round((first[axis] + last[axis] + last[dimension]) / 2);
   }
 
@@ -106,8 +131,8 @@ AlignElements.prototype._alignmentPosition = function(type, sortedElements) {
 
     // check if there is a center shared by more than one shape
     // if not, just take the middle of the range
-    forEach(sortedElements, function(element) {
-      var center = element[axis] + Math.round(element[dimension] / 2);
+    forEach(sortedElements, function(element:any) {
+      let  center = element[axis] + Math.round(element[dimension] / 2);
 
       if (centers[center]) {
         centers[center].elements.push(element);
@@ -119,7 +144,7 @@ AlignElements.prototype._alignmentPosition = function(type, sortedElements) {
       }
     });
 
-    centeredElements = sortBy(centers, function(center) {
+    centeredElements = sortBy(centers, function(center:any) {
       if (center.elements.length > 1) {
         hasSharedCenters = true;
       }
@@ -135,7 +160,7 @@ AlignElements.prototype._alignmentPosition = function(type, sortedElements) {
 
     firstElement = sortedElements[0];
 
-    sortedElements = sortBy(sortedElements, function(element) {
+    sortedElements = sortBy(sortedElements, function(element:any) {
       return element[axis] + element[dimension];
     });
 
@@ -147,24 +172,4 @@ AlignElements.prototype._alignmentPosition = function(type, sortedElements) {
   return alignment;
 };
 
-/**
- * Executes the alignment of a selection of elements
- *
- * @param  {Array} elements [description]
- * @param  {String} type left|right|center|top|bottom|middle
- */
-AlignElements.prototype.trigger = function(elements, type) {
-  var modeling = this._modeling;
-
-  var filteredElements = filter(elements, function(element) {
-    return !(element.waypoints || element.host || element.labelTarget);
-  });
-
-  var sortFn = ALIGNMENT_SORTING[type];
-
-  var sortedElements = sortBy(filteredElements, sortFn);
-
-  var alignment = this._alignmentPosition(type, sortedElements);
-
-  modeling.alignElements(sortedElements, alignment);
-};
+}

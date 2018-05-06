@@ -1,6 +1,13 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\lib\\command",
+    "\\lib\\i18n",
+    "\\lib\\navigation\\movecanvas",
+    "\\lib\\navigation\\touch",
+    "\\lib\\navigation\\zoomscroll",
+    "\\lib\\util"
   ],
+  "SelectedNode": "\\karma.conf.js",
   "PreviewInSolutionExplorer": false
 }
